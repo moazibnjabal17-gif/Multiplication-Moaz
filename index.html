@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>جدول الضرب | معاذ بن جبل</title>
+<meta name="theme-color" content="#0c4a6e">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg1: #0c4a6e;
+  --card: #ffffff;
+  --primary: #0369a1;
+  --accent: #0ea5e9;
+  --green: #16a34a;
+  --red: #dc2626;
+  --yellow: #ca8a04;
+  --text: #0f172a;
+  --muted: #64748b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  min-height: 100vh;
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(160deg, #0c4a6e 0%, #0369a1 45%, #0ea5e9 100%);
+  color: var(--text);
+  overflow-x: hidden;
+}
+.top {
+  position: fixed; top: 0; left: 0; right: 0; height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; background: rgba(12,74,110,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.15); z-index: 50;
+}
+.top-title { font-weight: 800; font-size: .92rem; color: #fff; }
+.top-btn {
+  width: 38px; height: 38px; border-radius: 12px; border: none;
+  background: rgba(255,255,255,.15); color: #fff; font-size: 1.15rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.screen { display: none; min-height: 100vh; padding: 70px 14px 28px; }
+.screen.active { display: block; }
+
+.hero { text-align: center; margin-bottom: 22px; color: #fff; }
+.hero-icon {
+  width: 86px; height: 86px; border-radius: 26px;
+  background: linear-gradient(145deg, #38bdf8, #0284c7);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px; font-size: 2.3rem; font-weight: 900; color: #fff;
+  box-shadow: 0 12px 36px rgba(14,165,233,.45);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+.hero h1 { font-size: 1.55rem; font-weight: 900; margin-bottom: 4px; }
+.hero .school { font-size: .95rem; font-weight: 700; opacity: .95; }
+.hero .area { font-size: .8rem; opacity: .8; margin-top: 2px; }
+
+.panel {
+  background: var(--card); border-radius: 24px; padding: 22px 18px;
+  max-width: 420px; margin: 0 auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+.label { font-size: .82rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
+.input {
+  width: 100%; padding: 13px 14px; border-radius: 14px; border: 2px solid #e2e8f0;
+  background: #f8fafc; color: var(--text); font-family: inherit; font-size: 1.05rem;
+  font-weight: 600; margin-bottom: 13px;
+}
+.input:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+.levels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.lvl {
+  padding: 13px 8px; border-radius: 16px; border: 2px solid #e2e8f0;
+  background: #f8fafc; text-align: center; cursor: pointer; transition: all .2s;
+  font-weight: 800; font-size: .95rem; color: var(--primary);
+}
+.lvl span { display: block; font-size: .7rem; font-weight: 600; color: var(--muted); margin-top: 2px; }
+.lvl.active {
+  border-color: var(--accent); background: #e0f2fe;
+  box-shadow: 0 0 0 3px rgba(14,165,233,.2);
+}
+
+.btn {
+  width: 100%; padding: 15px; border: none; border-radius: 16px;
+  font-family: inherit; font-weight: 800; font-size: 1.08rem; cursor: pointer;
+}
+.btn:active { transform: scale(.97); }
+.btn-main {
+  background: linear-gradient(135deg, #0ea5e9, #0369a1);
+  color: #fff; box-shadow: 0 8px 24px rgba(14,165,233,.4);
+}
+.btn-ghost {
+  background: #f1f5f9; border: 2px solid #e2e8f0;
+  color: var(--text); margin-top: 10px;
+}
+
+.stats-row {
+  max-width: 420px; margin: 0 auto 12px;
+  display: flex; gap: 10px;
+}
+.stat-pill {
+  flex: 1; background: rgba(255,255,255,.95); border-radius: 16px;
+  padding: 11px; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.1);
+}
+.stat-pill .v { font-size: 1.35rem; font-weight: 900; color: var(--primary); }
+.stat-pill .l { font-size: .7rem; color: var(--muted); font-weight: 600; }
+
+.timer-wrap {
+  max-width: 420px; margin: 0 auto 12px;
+  background: rgba(255,255,255,.95); border-radius: 16px; padding: 10px 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.1);
+}
+.timer-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 7px; font-weight: 800; font-size: .88rem; color: var(--text);
+}
+.timer-top .sec { color: var(--green); font-size: 1.15rem; }
+.timer-top .sec.warn { color: var(--yellow); animation: pulse .5s infinite; }
+.timer-top .sec.danger { color: var(--red); animation: pulse .35s infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; } 50% { opacity: .45; }
+}
+.timer-bar-bg {
+  height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;
+}
+.timer-bar {
+  height: 100%; width: 100%; border-radius: 10px;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  transition: width .08s linear;
+}
+.timer-bar.warn { background: linear-gradient(90deg, #eab308, #ca8a04); }
+.timer-bar.danger { background: linear-gradient(90deg, #f87171, #dc2626); }
+
+.q-box {
+  max-width: 420px; margin: 0 auto; background: #fff;
+  border-radius: 24px; padding: 22px 16px; text-align: center;
+  box-shadow: 0 16px 40px rgba(0,0,0,.18); transition: box-shadow .2s;
+}
+.q-box.good { box-shadow: 0 0 0 4px rgba(22,163,74,.35); }
+.q-box.bad { animation: shake .4s ease; }
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 25%{transform:translateX(-9px)} 75%{transform:translateX(9px)}
+}
+
+.q-label { font-size: .82rem; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+.q-main {
+  font-size: 2.9rem; font-weight: 900; letter-spacing: 3px;
+  margin: 6px 0 18px; color: var(--primary);
+}
+.q-main.pop { animation: qpop .3s ease; }
+@keyframes qpop {
+  0%{transform:scale(.88)} 55%{transform:scale(1.07)} 100%{transform:scale(1)}
+}
+
+.options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 4px;
+}
+.opt {
+  padding: 17px 8px; border-radius: 16px; border: 2px solid #e2e8f0;
+  background: #f8fafc; color: var(--primary); font-size: 1.45rem;
+  font-weight: 900; cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.opt:hover:not(:disabled) {
+  border-color: var(--accent); background: #e0f2fe; transform: translateY(-2px);
+}
+.opt:disabled { cursor: default; }
+.opt.correct {
+  background: #dcfce7; border-color: var(--green); color: var(--green);
+}
+.opt.wrong {
+  background: #fee2e2; border-color: var(--red); color: var(--red);
+}
+
+.msg {
+  font-size: 1.05rem; font-weight: 800; min-height: 28px; margin: 10px 0 4px;
+}
+.msg.ok { color: var(--green); }
+.msg.no { color: var(--red); }
+
+.bar-bg {
+  height: 5px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 12px;
+}
+.bar-fill {
+  height: 100%; background: linear-gradient(90deg, #22c55e, #0ea5e9);
+  border-radius: 10px; transition: width .3s ease;
+}
+
+.result-icon {
+  width: 96px; height: 96px; border-radius: 28px;
+  background: linear-gradient(145deg, #0ea5e9, #0369a1);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px; font-size: 2.8rem; color: #fff;
+  box-shadow: 0 12px 36px rgba(14,165,233,.4);
+}
+.big-score {
+  font-size: 3.8rem; font-weight: 900; text-align: center; color: var(--primary);
+  line-height: 1; margin: 6px 0;
+}
+.result-sub { text-align: center; color: var(--muted); margin-bottom: 18px; font-weight: 600; }
+.grid3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px;
+}
+.g-item {
+  background: #f0f9ff; border-radius: 14px; padding: 13px 4px; text-align: center;
+}
+.g-item .n { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+.g-item .t { font-size: .68rem; color: var(--muted); font-weight: 600; }
+.info-tag {
+  background: #e0f2fe; border-radius: 14px; padding: 11px;
+  text-align: center; font-size: .86rem; font-weight: 700;
+  color: var(--primary); margin-bottom: 12px;
+}
+.status-box {
+  border-radius: 14px; padding: 12px 14px; text-align: center;
+  font-size: .88rem; font-weight: 700; margin-bottom: 14px; line-height: 1.5;
+}
+.status-box.ok {
+  background: #dcfce7; color: #166534; border: 1px solid #86efac;
+}
+.status-box.fail {
+  background: #fef3c7; color: #92400e; border: 1px solid #fcd34d;
+}
+.conf {
+  position: fixed; width: 11px; height: 11px; top: -15px; z-index: 100;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+@media (max-width: 400px) {
+  .q-main { font-size: 2.4rem; }
+  .opt { font-size: 1.3rem; padding: 15px 6px; }
+  .big-score { font-size: 3.1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-title">معاذ بن جبل • جدول الضرب</div>
+  <button class="top-btn" onclick="goHome()">⌂</button>
+</div>
+
+<div class="screen active" id="home">
+  <div class="hero">
+    <div class="hero-icon">×</div>
+    <h1>جدول الضرب</h1>
+    <div class="school">مدرسة معاذ بن جبل المتوسطة بنين</div>
+    <div class="area">منطقة الفروانية التعليمية • قسم الرياضيات</div>
+  </div>
+
+  <div class="panel">
+    <label class="label">اسم الطالب</label>
+    <input class="input" id="name" placeholder="الاسم الثلاثي" autocomplete="name">
+
+    <label class="label">الصف / الفصل</label>
+    <input class="input" id="cls" placeholder="مثال: سادس 2" autocomplete="off">
+
+    <label class="label">المستوى</label>
+    <div class="levels">
+      <div class="lvl" data-l="easy" onclick="setLvl('easy')">سهل<span>1 – 5</span></div>
+      <div class="lvl" data-l="medium" onclick="setLvl('medium')">متوسط<span>1 – 9</span></div>
+      <div class="lvl active" data-l="hard" onclick="setLvl('hard')">صعب<span>1 – 12</span></div>
+      <div class="lvl" data-l="expert" onclick="setLvl('expert')">خبير<span>6 – 12</span></div>
+    </div>
+
+    <button class="btn btn-main" onclick="start()">ابدأ التحدي</button>
+  </div>
+</div>
+
+<div class="screen" id="game">
+  <div class="stats-row">
+    <div class="stat-pill"><div class="v" id="score">0</div><div class="l">النقاط</div></div>
+    <div class="stat-pill"><div class="v" id="qprog">1/20</div><div class="l">السؤال</div></div>
+  </div>
+
+  <div class="timer-wrap">
+    <div class="timer-top">
+      <span>⏱ الوقت المتبقي</span>
+      <span class="sec" id="timeLeft">10</span>
+    </div>
+    <div class="timer-bar-bg">
+      <div class="timer-bar" id="timeBar"></div>
+    </div>
+  </div>
+
+  <div class="q-box" id="qbox">
+    <div class="q-label" id="qnum">السؤال 1 من 20</div>
+    <div class="q-main" id="qtext">7 × 8</div>
+    <div class="options" id="options"></div>
+    <div class="msg" id="msg"></div>
+    <div class="bar-bg"><div class="bar-fill" id="bar"></div></div>
+  </div>
+</div>
+
+<div class="screen" id="result">
+  <div class="panel" style="text-align:center;">
+    <div class="result-icon" id="emoji">🏆</div>
+    <div style="font-size:1.25rem; font-weight:900;" id="rtitle">أحسنت!</div>
+    <div class="big-score" id="rscore">0</div>
+    <div class="result-sub">من أصل <span id="rtotal">20</span> سؤال</div>
+
+    <div class="grid3">
+      <div class="g-item"><div class="n" id="rcorrect">0</div><div class="t">صحيحة</div></div>
+      <div class="g-item"><div class="n" id="rtime">0</div><div class="t">ثانية</div></div>
+      <div class="g-item"><div class="n" id="racc">0%</div><div class="t">دقة</div></div>
+    </div>
+
+    <div class="info-tag" id="rinfo"></div>
+    <div class="status-box ok" id="statusBox">جاري حفظ النتيجة...</div>
+    <button class="btn btn-ghost" onclick="goHome()">العودة للرئيسية</button>
+  </div>
+</div>
+
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbylUYT7WNDacG-1ooA1EStnWUMgTA5CheG0N7fxH7kBCHg1XD2roLObMbvEGRNMjM7qEA/exec";
+const LVL = {
+  easy:   { n:"سهل", a:1, b:5, c:15 },
+  medium: { n:"متوسط", a:1, b:9, c:20 },
+  hard:   { n:"صعب", a:1, b:12, c:20 },
+  expert: { n:"خبير", a:6, b:12, c:20 }
+};
+const Q_TIME = 10;
+
+let name="", cls="", lvl="hard", qs=[], i=0, sc=0, t0=0, qTimer=null, locked=false, actx=null;
+
+function audio(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); return actx; }
+function tone(f,d,type='sine',v=.13){
+  try{
+    const c=audio(), o=c.createOscillator(), g=c.createGain();
+    o.type=type; o.frequency.value=f; g.gain.value=v;
+    o.connect(g); g.connect(c.destination); o.start();
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d); o.stop(c.currentTime+d);
+  }catch(e){}
+}
+function sndOk(){ tone(523,.08); setTimeout(()=>tone(659,.1),70); setTimeout(()=>tone(784,.16),140); }
+function sndNo(){ tone(180,.22,'sawtooth',.09); setTimeout(()=>tone(140,.28,'sawtooth',.07),110); }
+function sndGo(){ tone(440,.08); setTimeout(()=>tone(554,.08),90); setTimeout(()=>tone(659,.16),180); }
+function sndTick(){ tone(880,.035,'sine',.07); }
+function sndTimeout(){ tone(160,.3,'sawtooth',.1); }
+function sndEnd(g){
+  if(g){[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.18),i*110));}
+  else tone(280,.4,'triangle',.09);
+}
+
+function confetti(){
+  const cols=['#0ea5e9','#22c55e','#eab308','#ef4444','#a855f7','#ec4899'];
+  for(let k=0;k<48;k++){
+    const e=document.createElement('div'); e.className='conf';
+    e.style.left=Math.random()*100+'vw';
+    e.style.background=cols[Math.floor(Math.random()*cols.length)];
+    e.style.borderRadius=Math.random()>.5?'50%':'2px';
+    e.style.animationDuration=(1.3+Math.random()*2)+'s';
+    e.style.animationDelay=Math.random()*.25+'s';
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),3800);
+  }
+}
+
+function setLvl(l){
+  lvl=l;
+  document.querySelectorAll('.lvl').forEach(e=>e.classList.remove('active'));
+  document.querySelector(`.lvl[data-l="${l}"]`).classList.add('active');
+}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome(){ clearInterval(qTimer); show('home'); }
+
+function makeOptions(correct) {
+  const set = new Set([correct]);
+  while (set.size < 4) {
+    let c = correct + (Math.floor(Math.random()*11)-5);
+    if (c <= 0) c = correct + Math.floor(Math.random()*7)+1;
+    if (c !== correct) set.add(c);
+  }
+  return Array.from(set).sort(() => Math.random() - 0.5);
+}
+
+function start(){
+  name=document.getElementById('name').value.trim();
+  cls=document.getElementById('cls').value.trim()||'—';
+  if(!name){ alert('اكتب اسمك'); return; }
+  audio();
+  const L=LVL[lvl];
+  qs=[];
+  for(let k=0;k<L.c;k++){
+    const a=Math.floor(Math.random()*(L.b-L.a+1))+L.a;
+    const b=Math.floor(Math.random()*(L.b-L.a+1))+L.a;
+    const ans=a*b;
+    qs.push({a,b,ans,options:makeOptions(ans)});
+  }
+  i=0; sc=0; locked=false; t0=Date.now();
+  document.getElementById('score').textContent='0';
+  clearInterval(qTimer);
+  sndGo(); nextQ(); show('game');
+}
+
+function startQTimer(){
+  clearInterval(qTimer);
+  const bar=document.getElementById('timeBar');
+  const txt=document.getElementById('timeLeft');
+  bar.style.width='100%';
+  bar.className='timer-bar';
+  txt.textContent='10';
+  txt.className='sec';
+
+  const startMs=Date.now();
+  let lastSec=10;
+  qTimer=setInterval(()=>{
+    const elapsed=(Date.now()-startMs)/1000;
+    const left=Math.max(0, Q_TIME-elapsed);
+    const pct=(left/Q_TIME)*100;
+    bar.style.width=pct+'%';
+    const sec=Math.ceil(left);
+    txt.textContent=sec;
+
+    if(sec<=3){
+      bar.className='timer-bar danger';
+      txt.className='sec danger';
+      if(sec!==lastSec && sec>0){ sndTick(); lastSec=sec; }
+    } else if(sec<=5){
+      bar.className='timer-bar warn';
+      txt.className='sec warn';
+      lastSec=sec;
+    } else {
+      bar.className='timer-bar';
+      txt.className='sec';
+      lastSec=sec;
+    }
+
+    if(left<=0){
+      clearInterval(qTimer);
+      timeOut();
+    }
+  },40);
+}
+
+function timeOut(){
+  if(locked) return;
+  locked=true;
+  const q=qs[i];
+  const box=document.getElementById('qbox');
+  const msg=document.getElementById('msg');
+  const all=document.querySelectorAll('.opt');
+
+  all.forEach(b=>{
+    b.disabled=true;
+    if(parseInt(b.textContent)===q.ans) b.classList.add('correct');
+  });
+
+  msg.textContent=`انتهى الوقت! الإجابة الصحيحة: ${q.ans}`;
+  msg.className='msg no';
+  box.classList.add('bad');
+  sndTimeout();
+
+  document.getElementById('bar').style.width=((i+1)/qs.length*100)+'%';
+
+  setTimeout(()=>{
+    i++;
+    if(i>=qs.length) end(); else nextQ();
+  },1200);
+}
+
+function nextQ(){
+  locked=false;
+  const q=qs[i];
+  const el=document.getElementById('qtext');
+  el.textContent=`${q.a} × ${q.b}`;
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+
+  document.getElementById('qnum').textContent=`السؤال ${i+1} من ${qs.length}`;
+  document.getElementById('qprog').textContent=`${i+1}/${qs.length}`;
+  document.getElementById('msg').textContent='';
+  document.getElementById('msg').className='msg';
+  document.getElementById('bar').style.width=(i/qs.length*100)+'%';
+  document.getElementById('qbox').classList.remove('good','bad');
+
+  const box=document.getElementById('options');
+  box.innerHTML='';
+  q.options.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.textContent=opt;
+    btn.onclick=()=>choose(opt,btn);
+    box.appendChild(btn);
+  });
+  startQTimer();
+}
+
+function choose(val,btn){
+  if(locked) return;
+  locked=true;
+  clearInterval(qTimer);
+
+  const q=qs[i];
+  const box=document.getElementById('qbox');
+  const msg=document.getElementById('msg');
+  const all=document.querySelectorAll('.opt');
+
+  all.forEach(b=>{
+    b.disabled=true;
+    if(parseInt(b.textContent)===q.ans) b.classList.add('correct');
+  });
+
+  if(val===q.ans){
+    sc++;
+    msg.textContent='صحيح ✓';
+    msg.className='msg ok';
+    box.classList.add('good');
+    btn.classList.add('correct');
+    document.getElementById('score').textContent=sc;
+    sndOk();
+  } else {
+    msg.textContent=`خطأ ✗  الإجابة الصحيحة: ${q.ans}`;
+    msg.className='msg no';
+    box.classList.add('bad');
+    btn.classList.add('wrong');
+    sndNo();
+  }
+
+  document.getElementById('bar').style.width=((i+1)/qs.length*100)+'%';
+
+  setTimeout(()=>{
+    i++;
+    if(i>=qs.length) end(); else nextQ();
+  },900);
+}
+
+function end(){
+  clearInterval(qTimer);
+  const tot=qs.length, sec=Math.round((Date.now()-t0)/1000), pct=Math.round(sc/tot*100);
+
+  document.getElementById('rscore').textContent=sc;
+  document.getElementById('rtotal').textContent=tot;
+  document.getElementById('rcorrect').textContent=sc;
+  document.getElementById('rtime').textContent=sec;
+  document.getElementById('racc').textContent=pct+'%';
+  document.getElementById('rinfo').textContent=`${name} • ${cls} • ${LVL[lvl].n}`;
+
+  let title='أحسنت!', emoji='🏆';
+  if(pct>=95){ title='أسطوري!'; emoji='🌟'; confetti(); sndEnd(true); }
+  else if(pct>=80){ title='ممتاز!'; emoji='🎉'; confetti(); sndEnd(true); }
+  else if(pct>=60){ title='جيد'; emoji='👍'; sndEnd(false); }
+  else { title='حاول مرة أخرى'; emoji='💪'; sndEnd(false); }
+
+  document.getElementById('rtitle').textContent=title;
+  document.getElementById('emoji').textContent=emoji;
+
+  autoSave(sec, tot);
+  show('result');
+}
+
+function autoSave(sec, tot){
+  const box = document.getElementById('statusBox');
+  box.className = 'status-box ok';
+  box.textContent = 'جاري حفظ النتيجة للمعلم...';
+
+  const payload = {
+    name: name,
+    className: cls,
+    grade: 'جدول الضرب - ' + LVL[lvl].n,
+    unit: 'لعبة جدول الضرب',
+    score: sc,
+    total: tot,
+    seconds: sec,
+    date: new Date().toLocaleString('ar-KW')
+  };
+
+  fetch(URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    box.className = 'status-box ok';
+    box.innerHTML = '✓ تم إرسال النتيجة للمعلم<br><span style="font-size:.8rem;font-weight:600">إذا لم تظهر عند المعلم: التقط لقطة شاشة لهذه الصفحة وسلمها له</span>';
+  }).catch(() => {
+    box.className = 'status-box fail';
+    box.innerHTML = '⚠ تعذر الإرسال التلقائي<br><strong>التقط لقطة شاشة لهذه النتيجة الآن واحتفظ بها لتسليمها للمعلم</strong>';
+  });
+
+  setTimeout(() => {
+    if (box.textContent.includes('جاري')) {
+      box.className = 'status-box fail';
+      box.innerHTML = '⚠ تعذر الإرسال التلقائي<br><strong>التقط لقطة شاشة لهذه النتيجة الآن واحتفظ بها لتسليمها للمعلم</strong>';
+    }
+  }, 4000);
+}
+</script>
+</body>
+</html>
